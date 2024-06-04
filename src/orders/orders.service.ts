@@ -12,8 +12,8 @@ export class OrdersService {
     ) {}
 
     create(createOrderDto: CreateOrderDto): Promise<Order> {
-        const order = new Order();
-        order.price = createOrderDto.orderPrice;
+        let order = new Order();
+        order = Object.assign(order, createOrderDto);
         return order.save();
     }
 
@@ -25,13 +25,20 @@ export class OrdersService {
         return this.ordersRepository.findOne<Order>({ where: { id } });
     }
 
-    update(id: number, updateOrderDto: UpdateOrderDto) {
-        const order = new Order();
+    async update(id: number, updateOrderDto: UpdateOrderDto): Promise<Order> {
+        const order = await this.findOne(id);
         order.price = updateOrderDto.orderPrice;
         return order.save();
     }
 
-    remove(id: number) {
-        return `This action removes a #${id} order`;
+    async updatePartial(id: number, updateOrderDto: UpdateOrderDto): Promise<Order> {
+        let order = await this.findOne(id);
+        if (!order) throw new Error('Order not found');
+        order = Object.assign(order, updateOrderDto);
+        return order.save();
+    }
+
+    remove(id: number): Promise<number> {
+        return this.ordersRepository.destroy({ where: { id } });
     }
 }

@@ -5,6 +5,7 @@ export class CreateOrderDto {
     readonly orderPrice: number;
     readonly orderDate: Date;
     readonly orderStatus: string;
+    readonly orderSequence: number;
     readonly customerName: string;
     readonly orderItems: Array<CreateRecipeDto>;
 }
