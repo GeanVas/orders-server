@@ -11,9 +11,6 @@ import { Recipe } from 'src/recipe/entities/recipe.entity';
 @Table
 export class Order extends Model<Order> {
     @Column
-    price: number;
-
-    @Column
     customerName: string;
 
     @Column
