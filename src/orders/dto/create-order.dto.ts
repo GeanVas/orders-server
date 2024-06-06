@@ -1,15 +1,23 @@
 import { CreateRecipeDto } from 'src/recipe/dto/create-recipe.dto';
+import { IsDate, IsDecimal, IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { StatusEnum } from 'src/shared/enums/status';
 
 export class CreateOrderDto {
-    readonly customerName: string;
+    @IsNotEmpty()
+    @IsString()
+    readonly customerName!: string;
 
+    @IsDate()
     readonly date: Date = new Date();
 
+    @IsInt()
     readonly sequence: number;
 
-    readonly status: string = 'Pending';
+    @IsEnum(StatusEnum)
+    readonly status: string = StatusEnum.PENDING;
 
-    readonly totalPrice: number;
+    @IsDecimal()
+    readonly totalPrice!: number;
 
     readonly recipes: Array<CreateRecipeDto> = [];
 }

@@ -1,12 +1,7 @@
-import {
-    Model,
-    Column,
-    Table,
-    BelongsToMany,
-    DataType,
-} from 'sequelize-typescript';
+import { Model, Column, Table, BelongsToMany, DataType } from 'sequelize-typescript';
 import { OrderRecipe } from 'src/order-recipe/order-recipe';
 import { Recipe } from 'src/recipe/entities/recipe.entity';
+import { StatusEnum } from 'src/shared/enums/status';
 
 @Table
 export class Order extends Model<Order> {
@@ -19,7 +14,7 @@ export class Order extends Model<Order> {
     @Column
     sequence: number;
 
-    @Column
+    @Column(DataType.ENUM({ values: Object.values(StatusEnum) }))
     status: string;
 
     @Column(DataType.DECIMAL)
