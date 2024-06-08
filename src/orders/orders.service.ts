@@ -4,6 +4,8 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
 import { ORDERS_REPOSITORY } from 'src/shared/constants/entityProviders';
 import { Recipe } from 'src/recipe/entities/recipe.entity';
+import { RecipeDto } from 'src/recipe/dto/recipe.dto';
+import { OrderDto } from './dto/order.dto';
 
 @Injectable()
 export class OrdersService {
@@ -22,22 +24,45 @@ export class OrdersService {
             const lastSeq = await this.ordersRepository.max<number, Order>('sequence', options);
             order.sequence = (lastSeq || 0) + 1;
         }
-        return order.save();
+        await order.save();
+
+        if (Array.isArray(createOrderDto.recipes)) {
+            for (const recipeId of createOrderDto.recipes) {
+                const recipe = await Recipe.findByPk(recipeId);
+                if (!recipe) throw new Error(`Recipe with ID ${recipeId} does not exist`);
+                await order.$add('recipe', recipe.id);
+            }
+        }
+
+        return order;
     }
 
-    findAll(): Promise<Order[]> {
-        return this.ordersRepository.findAll<Order>();
+    async findAll(): Promise<OrderDto[]> {
+        const orders = await this.ordersRepository.findAll<Order>();
+        return orders.map((order) => order as OrderDto);
     }
 
-    findOne(id: number): Promise<Order> {
+    private findOneByIdWithRecipes(id: number): Promise<Order> {
         return this.ordersRepository.findOne<Order>({
             where: { id },
             include: [Recipe],
         });
     }
 
+    async findOne(id: number): Promise<OrderDto> {
+        const order = await this.findOneByIdWithRecipes(id);
+        if (!order) throw new Error('Order not found');
+
+        const { recipes, ...orderData } = order.dataValues;
+
+        const recipeDtos = recipes.map((recipe) => recipe as RecipeDto);
+        const orderDto = new OrderDto({ ...orderData, recipes: recipeDtos });
+
+        return orderDto;
+    }
+
     async update(id: number, updateOrderDto: UpdateOrderDto): Promise<Order> {
-        let order = await this.findOne(id);
+        let order = await this.findOneByIdWithRecipes(id);
 
         if (!order) throw new Error('Order not found');
 
@@ -53,7 +78,7 @@ export class OrdersService {
     }
 
     async updatePartial(id: number, updateOrderDto: UpdateOrderDto): Promise<Order> {
-        let order = await this.findOne(id);
+        let order = await this.findOneByIdWithRecipes(id);
         if (!order) throw new Error('Order not found');
         order = Object.assign(order, updateOrderDto);
         return order.save();

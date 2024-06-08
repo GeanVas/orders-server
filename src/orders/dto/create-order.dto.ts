@@ -1,5 +1,3 @@
-import { CreateRecipeDto } from 'src/recipe/dto/create-recipe.dto';
-
 export class CreateOrderDto {
     readonly customerName: string;
 
@@ -11,5 +9,5 @@ export class CreateOrderDto {
 
     readonly totalPrice: number;
 
-    readonly recipes: Array<CreateRecipeDto> = [];
+    readonly recipes: number[] = [];
 }
