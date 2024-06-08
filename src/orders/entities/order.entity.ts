@@ -1,10 +1,4 @@
-import {
-    Model,
-    Column,
-    Table,
-    BelongsToMany,
-    DataType,
-} from 'sequelize-typescript';
+import { Model, Column, Table, BelongsToMany, DataType } from 'sequelize-typescript';
 import { OrderRecipe } from 'src/order-recipe/order-recipe';
 import { Recipe } from 'src/recipe/entities/recipe.entity';
 

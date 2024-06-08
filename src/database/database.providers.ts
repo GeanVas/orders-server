@@ -18,14 +18,7 @@ export const databaseProviders = [
                 username: process.env.DB_USER,
                 password: process.env.DB_PASS,
                 database: process.env.DB_NAME,
-                models: [
-                    Order,
-                    Recipe,
-                    OrderRecipe,
-                    Ingredient,
-                    RecipeIngredient,
-                    Inventory,
-                ],
+                models: [Order, Recipe, OrderRecipe, Ingredient, RecipeIngredient, Inventory],
             });
             await sequelize.sync({ alter: true });
             return sequelize;

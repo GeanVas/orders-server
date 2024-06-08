@@ -11,9 +11,7 @@ describe('RecipeIngredientsController', () => {
             providers: [RecipeIngredientsService],
         }).compile();
 
-        controller = module.get<RecipeIngredientsController>(
-            RecipeIngredientsController,
-        );
+        controller = module.get<RecipeIngredientsController>(RecipeIngredientsController);
     });
 
     it('should be defined', () => {

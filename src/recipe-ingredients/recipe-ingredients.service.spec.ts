@@ -9,9 +9,7 @@ describe('RecipeIngredientsService', () => {
             providers: [RecipeIngredientsService],
         }).compile();
 
-        service = module.get<RecipeIngredientsService>(
-            RecipeIngredientsService,
-        );
+        service = module.get<RecipeIngredientsService>(RecipeIngredientsService);
     });
 
     it('should be defined', () => {
