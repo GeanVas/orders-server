@@ -19,5 +19,5 @@ export class CreateOrderDto {
     @IsDecimal()
     readonly totalPrice!: number;
 
-    readonly recipes: number[] = [];
+    readonly recipes: CreateRecipeDto[] = [];
 }

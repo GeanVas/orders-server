@@ -27,9 +27,9 @@ export class OrdersService {
         await order.save();
 
         if (Array.isArray(createOrderDto.recipes)) {
-            for (const recipeId of createOrderDto.recipes) {
-                const recipe = await Recipe.findByPk(recipeId);
-                if (!recipe) throw new Error(`Recipe with ID ${recipeId} does not exist`);
+            for (const recipeDto of createOrderDto.recipes) {
+                const recipe = await Recipe.findByPk(recipeDto.id);
+                if (!recipe) throw new Error(`Recipe with ID ${recipeDto.id} does not exist`);
                 await order.$add('recipe', recipe.id);
             }
         }
