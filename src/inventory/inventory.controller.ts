@@ -9,26 +9,26 @@ export class InventoryController {
 
     @Post()
     create(@Body() createInventoryDto: CreateInventoryDto) {
-        return this.inventoryService.create(createInventoryDto);
+        this.inventoryService.create(createInventoryDto);
     }
 
     @Get()
-    findAll() {
+    findAll(): Promise<CreateInventoryDto[]> {
         return this.inventoryService.findAll();
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
+    findOne(@Param('id') id: string): Promise<CreateInventoryDto> {
         return this.inventoryService.findOne(+id);
     }
 
     @Patch(':id')
     update(@Param('id') id: string, @Body() updateInventoryDto: UpdateInventoryDto) {
-        return this.inventoryService.update(+id, updateInventoryDto);
+        this.inventoryService.update(+id, updateInventoryDto);
     }
 
     @Delete(':id')
     remove(@Param('id') id: string) {
-        return this.inventoryService.remove(+id);
+        this.inventoryService.remove(+id);
     }
 }

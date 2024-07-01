@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateInventoryDto } from './dto/create-inventory.dto';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
 import { Inventory } from './entities/inventory.entity';
@@ -11,36 +11,47 @@ export class InventoryService {
         private inventoryRepository: typeof Inventory,
     ) {}
 
-    create(createInventoryDto: CreateInventoryDto): Promise<CreateInventoryDto> {
-        const inventory = this.inventoryRepository.create({ ...createInventoryDto });
+    async create(createInventoryDto: CreateInventoryDto): Promise<CreateInventoryDto> {
+        const inventory = await this.inventoryRepository.create({ ...createInventoryDto });
 
-        return inventory;
+        return new CreateInventoryDto(inventory);
     }
 
-    findAll(): Promise<CreateInventoryDto[]> {
-        return this.inventoryRepository.findAll<Inventory>() as Promise<CreateInventoryDto[]>;
+    async findAll(): Promise<CreateInventoryDto[]> {
+        const inventories = await this.inventoryRepository.findAll<Inventory>();
+
+        if (!inventories) return [];
+
+        const inventoriesDto = inventories.map((inventory) => new CreateInventoryDto(inventory));
+
+        return inventoriesDto;
     }
 
-    findOne(id: number): Promise<CreateInventoryDto> {
-        const inventory = this.inventoryRepository.findByPk<Inventory>(
-            id,
-        ) as Promise<CreateInventoryDto>;
-        if (!inventory) throw new Error('Inventory not found');
+    async findOne(id: number): Promise<CreateInventoryDto> {
+        const inventory = await this.inventoryRepository.findByPk<Inventory>(id);
 
-        return inventory;
+        if (!inventory) throw new NotFoundException('Inventory not found');
+
+        const inventoryDto = new CreateInventoryDto(inventory);
+
+        return inventoryDto;
     }
 
     async update(id: number, updateInventoryDto: UpdateInventoryDto): Promise<UpdateInventoryDto> {
         const inventory = await this.inventoryRepository.findByPk<Inventory>(id);
-        if (!inventory) throw new Error('Inventory not found');
 
-        inventory.update(updateInventoryDto);
-        return inventory;
+        if (!inventory) throw new NotFoundException('Inventory not found');
+
+        const updatedInventory = await inventory.update(updateInventoryDto);
+        const updatedInventoryDto = new UpdateInventoryDto(updatedInventory);
+
+        return updatedInventoryDto;
     }
 
     async remove(id: number) {
         const inventory = await this.inventoryRepository.findByPk<Inventory>(id);
-        if (!inventory) throw new Error('Inventory not found');
+
+        if (!inventory) throw new NotFoundException('Inventory not found');
 
         inventory.destroy();
     }
